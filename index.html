@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Stanford Gallery</title>
+	<link rel="stylesheet" href="gallery.css" />
+</head>
+
+<body>
+	<div id="photoSection">
+		
+		<img id='photo' src='memchu.jpg' alt='photo' />
+		<div id="caption">
+			Stanford Memorial Church - the church used to have an 80' bell tower, which fell in the 1906 earthquake.
+		</div>
+		<div id="forwardOverlay"></div>
+		<div id="backwardOverlay"></div>
+		
+	</div>
+	<script>
+		"use strict";
+
+		function handleResize() {
+			var newWidth = window.innerWidth;
+			var newHeight = window.innerHeight;
+
+			var newMargin = (newWidth - 800) / 2;
+			var newTopMargin = (newHeight - 600) / 2;
+
+			document.getElementById("photoSection").style.left = newMargin + "px";
+			document.getElementById("photoSection").style.top = newTopMargin + "px";
+		}
+
+		var photoArray = [
+			{
+				filename: "https://raw.githubusercontent.com/z-a-y/ART185/master/altar.jpg",
+				caption: "Stanford Memorial Church - the church used to have an 80' bell tower, which fell in the 1906 earthquake."
+			},
+			{
+				filename: "https://raw.githubusercontent.com/z-a-y/ART185/master/drawer.jpg",
+				caption: "The Stanford Quad"
+			},
+			{
+				filename: "https://raw.githubusercontent.com/z-a-y/ART185/master/masks.jpg",
+				caption: "The <i>Red Hoop Fountain</i> with Green Library in the background."
+			},
+			{
+				filename: "https://raw.githubusercontent.com/z-a-y/ART185/master/plants.jpg",
+				caption: "Memorial Court (in the front of the Quad) with Rodin's <i>Burghers of Calais</i> statues."
+			},
+			{
+				filename: "https://raw.githubusercontent.com/z-a-y/ART185/master/medicine.jpg",
+				caption: "The Gates Building - home of Stanford Computer Science."
+			},
+			{
+				filename: "https://raw.githubusercontent.com/z-a-y/ART185/master/shelf.jpg",
+				caption: "The Stone River statue near the Cantor Arts Center (Stanford's own art museum)."
+			},
+		];
+
+		var photoCounter = 0;
+
+		document.getElementById("forwardOverlay").addEventListener("click", function () {
+			photoCounter++;
+			if (photoCounter > photoArray.length -1) {
+				photoCounter = 0;
+			}
+			var imageObject = photoArray[photoCounter];
+
+			document.getElementById("caption").innerHTML = imageObject.caption;
+			document.getElementById("photo").src = imageObject.filename;
+		});
+
+		document.getElementById("backwardOverlay").addEventListener("click", function () {
+			photoCounter--;
+			if (photoCounter < 0) {
+				photoCounter = photoCounter + photoArray.length;
+			}
+			var imageObject = photoArray[photoCounter];
+
+			document.getElementById("caption").innerHTML = imageObject.caption;
+			document.getElementById("photo").src = imageObject.filename;
+		});
+
+		window.addEventListener("resize", handleResize, false);
+</script>
+</body>
+
+</html>
