@@ -45,7 +45,7 @@ ul {
     box-sizing: border-box;
 }
 
-#photoSection {
+#videoDiv {
     position: relative;
 
     left: calc(50% - 400px);
