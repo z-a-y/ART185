@@ -55,46 +55,11 @@ ul {
     height: 600px;
 }
 
-img {
-    position: absolute;
+video {
+	position: absolute;
 	left: 0px;
-    top: 0px;
-    
+	top: 0px;
 	width: 800px;
 	height: 600px;
 }
 
-#caption {
-    position: absolute;
-	left: 0px;
-    bottom: 0px;
-    
-    padding: 10px;
-	color: white;
-	font-size: 14pt;
-	font-family: sans-serif;
-	background-color: #008800;
-    opacity: 0.5;
-    width: 800px;
-    height: auto;
-}
-
-#backwardOverlay {
-	position: absolute;
-	left: 0px;
-	top: 0px;
-
-
-	width: 400px;
-	height: 550px;
-}
-
-#forwardOverlay {
-	position: absolute;
-	right: 0px;
-	top: 0px;
-
-
-	width: 400px;
-	height: 550px;
-}
