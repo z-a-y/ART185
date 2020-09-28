@@ -45,19 +45,9 @@ ul {
     box-sizing: border-box;
 }
 
-#videoDiv {
-    position: relative;
-
-    left: calc(50% - 400px);
-    top: 50px;
-    
-    width: 800px;
-    height: 600px;
-}
-
 video {
 	position: absolute;
-	left: 0px;
+	left: calc(50% - 400px);
 	top: 0px;
 	width: 800px;
 	height: 600px;
