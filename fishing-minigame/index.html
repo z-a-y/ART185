@@ -1,0 +1,374 @@
+<html>
+
+<head>
+    <title>Fishing </title>
+    <style type="text/css">
+        /* http://meyerweb.com/eric/tools/css/reset/ 
+        v2.0 | 20110126
+        License: none (public domain)
+        */
+
+        html,
+        body,
+        div,
+        span,
+        applet,
+        object,
+        iframe,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p,
+        blockquote,
+        pre,
+        a,
+        abbr,
+        acronym,
+        address,
+        big,
+        cite,
+        code,
+        del,
+        dfn,
+        em,
+        img,
+        ins,
+        kbd,
+        q,
+        s,
+        samp,
+        small,
+        strike,
+        strong,
+        sub,
+        sup,
+        tt,
+        var,
+        b,
+        u,
+        i,
+        center,
+        dl,
+        dt,
+        dd,
+        ol,
+        ul,
+        li,
+        fieldset,
+        form,
+        label,
+        legend,
+        table,
+        caption,
+        tbody,
+        tfoot,
+        thead,
+        tr,
+        th,
+        td,
+        article,
+        aside,
+        canvas,
+        details,
+        embed,
+        figure,
+        figcaption,
+        footer,
+        header,
+        hgroup,
+        menu,
+        nav,
+        output,
+        ruby,
+        section,
+        summary,
+        time,
+        mark,
+        audio,
+        video {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font-size: 100%;
+            font: inherit;
+            vertical-align: baseline;
+        }
+
+        /* HTML5 display-role reset for older browsers */
+        article,
+        aside,
+        details,
+        figcaption,
+        figure,
+        footer,
+        header,
+        hgroup,
+        menu,
+        nav,
+        section {
+            display: block;
+        }
+
+        body {
+            line-height: 1;
+        }
+
+        ol,
+        ul {
+            list-style: none;
+        }
+
+        blockquote,
+        q {
+            quotes: none;
+        }
+
+        blockquote:before,
+        blockquote:after,
+        q:before,
+        q:after {
+            content: '';
+            content: none;
+        }
+
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        @font_face {
+            font-family: 'ChiKareGo2';
+            src: url('ChiKareGo2.ttf');
+        }
+
+        body {
+            background-color: #000000;
+            font-family: 'ChiKareGo2';
+        }
+
+        #myFishingGame {
+            /*border: 1px solid #d3d3d3;*/
+            /*background-image: url('sea.gif');*/
+            background-color: #0da2ff;
+            background-size: cover;
+            margin-top: 0;
+        }
+
+        #bloc1 {
+            position: absolute;
+            top: 288;
+            left: 330;
+            font-size: 60;
+            font: bold;
+        }
+
+        #bloc2 {
+            float: left;
+            background-color: #ffffff;
+            position: center;
+            text-align: center;
+            font-size: 30;
+            font: bold;
+            width: 840;
+            color: #000000;
+            border-top: 2pt solid black;
+            border-bottom: 2pt solid black;
+
+        }
+    </style>
+</head>
+
+<body onload="startGame()">
+
+    <canvas id="myFishingGame" width="840" height="576">
+    </canvas>
+
+    <div id="parent-div">
+        <div id="bloc1" class="child-div">
+        </div>
+
+        <div id="bloc2" class="child-div">
+            Time Left: 1:00
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var myHero;
+        var endScreen;
+        var fish;
+        var fishes = [];
+        var fishCount = 35;
+        var collisions = 0;
+        var timeoutHandle;
+
+        function countdown(minutes) {
+            var seconds = 60;
+            var mins = minutes
+            function tick() {
+                var counter = document.getElementById("bloc2");
+                var current_minutes = mins - 1
+                seconds--;
+                counter.innerHTML = "Time Left: " +
+                    current_minutes.toString() + ":" + (seconds < 10 ? "0" : "") + String(seconds);
+                if (seconds > 0) {
+                    timeoutHandle = setTimeout(tick, 1000);
+                } else {
+
+                    if (mins > 1) {
+
+                        setTimeout(function () { countdown(mins - 1); }, 1000);
+
+                    }
+                }
+            }
+            tick();
+        }
+
+        countdown(1);
+
+
+        var myGameArea = {
+            canvas: document.getElementById("myFishingGame"),
+            start: function () {
+                this.context = this.canvas.getContext("2d");
+                this.interval = setInterval(updateGameArea, 40);
+                window.addEventListener('keydown', function (e) {
+                    myGameArea.key = e.keyCode;
+                })
+                window.addEventListener('keyup', function (e) {
+                    myGameArea.key = false;
+                })
+            },
+
+            clear: function () {
+                this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            }
+        }
+
+        function updateGameArea() {
+            myGameArea.clear();
+            for (var i = 0; i < fishCount; i++) {
+                fishes[i].x = fishes[i].x + fishes[i].speed;
+                // Collisions
+                if (fishes[i].x >= myHero.x && fishes[i].x <= myHero.x + myHero.width && fishes[i].y >= myHero.y - 5 && fishes[i].y <= myHero.y + myHero.height * 0.65) { // 0.57 multiplier for the net to handle ratio
+                    fishes[i].x = getRndInteger(-1200, 0);
+                    fishes[i].y = getRndInteger(0, 550);
+                    fishes[i].speed = fishes[i].speed * 1.25;
+                    collisions++;
+                }
+                fishes[i].update();
+            }
+            myHero.speedx = 0;
+            myHero.speedy = 0;
+            if (myGameArea.key && myGameArea.key == 37) { myHero.speedx = -15; }
+            if (myGameArea.key && myGameArea.key == 39) { myHero.speedx = 15; }
+            if (myGameArea.key && myGameArea.key == 38) { myHero.speedy = -15; }
+            if (myGameArea.key && myGameArea.key == 40) { myHero.speedy = 15; }
+            myHero.newPos();
+            myHero.update();
+
+            var currentTimeString = document.getElementById("bloc2").innerHTML;
+            var last2 = parseInt(currentTimeString.slice(-2));
+            var lastmin = parseInt(currentTimeString.slice(-4, -3));
+
+            if (last2 == 0 && lastmin == 0) {
+                endGame();
+            }
+
+
+        }
+
+        function endGame() {
+            myGameArea.clear();
+            endScreen = new component1(432, 300, "fish_end_screen.png", 204, 120, "image");
+            endScreen.update();
+            document.getElementById("bloc1").innerHTML = collisions + " Fish";
+        }
+
+        var startGame = function () {
+            myGameArea.start();
+            setTimeout(function () { alert("Click to start. Use the arrow keys to move your net.") }, 0000);
+            myHero = new component1(87, 100, "pixel_net_lg.png", 386, 120, "image");
+            for (var i = 0; i < fishCount; i++) {
+                var RandomX = getRndInteger(-1200, -10);
+                var RandomY = getRndInteger(1, 550);
+                var RandomX2 = getRndInteger(-1200, -10);
+                var RandomY2 = getRndInteger(1, 550);
+                var RandomSpeed = getRndInteger(3, 12);
+                var randomBigFish = getRndInteger(6, 10);
+                var randomLilFish = getRndInteger(1, 5);
+
+                fishes.push(new component(96, 50, "fish" + randomLilFish + ".png", RandomX, RandomY, RandomSpeed, "image"));
+                fishes.push(new component(111, 51, "fish" + randomBigFish + ".png", RandomX2, RandomY2, RandomSpeed, "image"));
+            }
+        }
+
+        function getRndInteger(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function component(width, height, color, x, y, speed, type) {
+            this.type = type;
+            if (type == "image") {
+                this.image = new Image();
+                this.image.src = color;
+            }
+            this.width = width;
+            this.height = height;
+            this.x = x;
+            this.y = y;
+
+            this.color = color;
+            this.speed = speed;
+            this.update = function () {
+                var ctx = myGameArea.context;
+                if (type == "image") {
+                    ctx.drawImage(this.image,
+                        this.x,
+                        this.y,
+                        this.width, this.height);
+                } else {
+                    ctx.fillStyle = color;
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                }
+            };
+
+        }
+
+        function component1(width, height, color, x, y, type) {
+            this.type = type;
+            if (type == "image") {
+                this.image = new Image();
+                this.image.src = color;
+            }
+            this.width = width;
+            this.height = height;
+            this.x = x;
+            this.y = y;
+            this.speedx = 0;
+            this.speedy = 0;
+            this.color = color;
+            this.update = function () {
+                var ctx = myGameArea.context;
+                if (type == "image") {
+                    ctx.drawImage(this.image,
+                        this.x,
+                        this.y,
+                        this.width, this.height);
+                } else {
+                    ctx.fillStyle = color;
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
+                }
+            };
+            this.newPos = function () {
+                this.x += this.speedx;
+                this.y += this.speedy;
+            }
+        }
+    </script>
+</body>
+
+</html>
