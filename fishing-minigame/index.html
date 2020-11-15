@@ -290,7 +290,7 @@
 
         var startGame = function () {
             setTimeout(function () { alert("Click inside game window to start. Use the arrow keys to move your net.") }, 0000);
-            setTimeout(myGameArea.start(), 1000)
+            setTimeout(myGameArea.start(), 3000);
             myHero = new component1(87, 100, "pixel_net_lg.png", 386, 120, "image");
             for (var i = 0; i < fishCount; i++) {
                 var RandomX = getRndInteger(-1200, -10);
